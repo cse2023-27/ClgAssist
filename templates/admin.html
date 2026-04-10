@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/admin.css">
+
+    <script>
+    function toggleFAQ() {
+        let more = document.getElementById("moreFaq");
+        let btn = document.getElementById("faqBtn");
+
+        if (more.style.display === "none") {
+            more.style.display = "block";
+            btn.innerText = "Show Less";
+        } else {
+            more.style.display = "none";
+            btn.innerText = "Show All";
+        }
+    }
+
+    function toggleUnknown() {
+        let more = document.getElementById("moreUnknown");
+        let btn = document.getElementById("unknownBtn");
+
+        if (more.style.display === "none") {
+            more.style.display = "block";
+            btn.innerText = "Show Less";
+        } else {
+            more.style.display = "none";
+            btn.innerText = "Show All";
+        }
+    }
+
+    // 🔍 SEARCH FUNCTION
+    function searchFAQ() {
+        let input = document.getElementById("searchFAQ").value.toLowerCase();
+        let items = document.getElementsByClassName("faq-item");
+
+        // Auto show hidden FAQs when searching
+        if (input.length > 0) {
+            document.getElementById("moreFaq").style.display = "block";
+            document.getElementById("faqBtn").innerText = "Show Less";
+        }
+
+        for (let i = 0; i < items.length; i++) {
+            let text = items[i].innerText.toLowerCase();
+            items[i].style.display = text.includes(input) ? "block" : "none";
+        }
+    }
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <img src="/static/logo.jpg">
+        <h3>JACSICSE</h3>
+
+        <button onclick="window.location='/'">💬 Chat</button>
+        <button onclick="window.location='/logout'">🚪 Logout</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="chat-area">
+
+        <div class="chat-header-box">📊 Admin Dashboard</div>
+
+        <!-- STATS -->
+        <div class="cards">
+            <div class="card">FAQs: {{faq|length}}</div>
+            <div class="card">Unknown: {{unknown|length}}</div>
+        </div>
+
+        <!-- ADD FAQ -->
+        <div class="glass">
+            <h3>Add FAQ</h3>
+
+            <form method="POST" action="/add">
+                <input name="question" class="input-field" placeholder="Question..." required>
+                <textarea name="answer" class="textarea-field" placeholder="Answer..." required></textarea>
+                <button id="button">Add FAQ</button>
+            </form>
+        </div>
+
+        <!-- FAQ LIST -->
+        <div class="glass">
+            <h3>All FAQs</h3>
+
+            <!-- 🔍 SEARCH BOX -->
+            <input 
+                type="text" 
+                id="searchFAQ" 
+                onkeyup="searchFAQ()" 
+                placeholder="🔍 Search question..." 
+                class="input-field"
+            >
+
+            {% for f in faq[:5] %}
+            <div class="faq-box faq-item">
+                <p class="question-text">{{loop.index}}. {{f.question}}</p>
+
+                <form method="POST" action="/update_faq/{{f._id}}">
+                    <textarea name="answer" class="textarea-field">{{f.answer}}</textarea>
+
+                    <div class="btn-row">
+                        <button class="btn">Update</button>
+                        <a href="/delete_faq/{{f._id}}">
+                            <button type="button" class="btn-danger">Delete</button>
+                        </a>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+
+            <!-- Hidden FAQs -->
+            <div id="moreFaq" style="display:none;">
+                {% for f in faq[5:] %}
+                <div class="faq-box faq-item">
+                    <p class="question-text">{{loop.index + 5}}. {{f.question}}</p>
+
+                    <form method="POST" action="/update_faq/{{f._id}}">
+                        <textarea name="answer" class="textarea-field">{{f.answer}}</textarea>
+
+                        <div class="btn-row">
+                            <button class="btn">Update</button>
+                            <a href="/delete_faq/{{f._id}}">
+                                <button type="button" class="btn-danger">Delete</button>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if faq|length > 5 %}
+            <button id="faqBtn" class="btn" onclick="toggleFAQ()">Show All</button>
+            {% endif %}
+        </div>
+
+        <!-- UNKNOWN QUESTIONS -->
+        <div class="glass">
+            <h3>Unknown Questions</h3>
+
+            {% for q in unknown[:5] %}
+            <div class="unknown">
+                <p class="question-text">{{loop.index}}. {{q.question}}</p>
+
+                <form method="POST" action="/add">
+                    <input type="hidden" name="question" value="{{q.question}}">
+
+                    <textarea name="answer" class="textarea-field" placeholder="Type answer..."></textarea>
+
+                    <div class="btn-row">
+                        <button class="btn">Add</button>
+                        <a href="/delete/{{q._id}}">
+                            <button type="button" class="btn-danger">Delete</button>
+                        </a>
+                    </div>
+                </form>
+            </div>
+            {% endfor %}
+
+            <!-- Hidden Unknown -->
+            <div id="moreUnknown" style="display:none;">
+                {% for q in unknown[5:] %}
+                <div class="unknown">
+                    <p class="question-text">{{loop.index + 5}}. {{q.question}}</p>
+
+                    <form method="POST" action="/add">
+                        <input type="hidden" name="question" value="{{q.question}}">
+
+                        <textarea name="answer" class="textarea-field"></textarea>
+
+                        <div class="btn-row">
+                            <button class="btn">Add</button>
+                            <a href="/delete/{{q._id}}">
+                                <button type="button" class="btn-danger">Delete</button>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if unknown|length > 5 %}
+            <button id="unknownBtn" class="btn" onclick="toggleUnknown()">Show All</button>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

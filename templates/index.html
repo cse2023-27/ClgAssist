@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Assistant</title>
+    <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR (UNCHANGED) -->
+    <div class="sidebar">
+        <img src="/static/logo.jpg">
+        <h3>JACSICSE</h3>
+
+        <button onclick="quickMsg('What is the fees structure?')">💰 Fees</button> 
+        <button onclick="quickMsg('which course are available')">📚 Courses</button>
+        <button onclick="quickMsg('What facilities are available?')">🏫 Facilities</button>
+        <button onclick="quickMsg('what is the contact information?')">📞 Contact</button>
+
+        <hr>
+        <button onclick="window.location='/admin'" id="adminbtn">Admin</button>
+    </div>
+
+    <!-- CHAT AREA -->
+    <div class="chat-area">
+
+        <!-- HEADER -->
+        <div class="chat-header-box">
+            <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+            🎓 College Assistant<br>
+            <span class="status">● Online</span>
+        </div>
+
+        <!-- CHAT -->
+        <div id="chat-box"></div>
+
+        <!-- INPUT -->
+        <div class="input-box">
+            <input id="user-input" placeholder="Ask about college..." onkeypress="handleKey(event)">
+            <button onclick="sendMessage()">➤</button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
