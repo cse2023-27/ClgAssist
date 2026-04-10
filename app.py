@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify, redirect, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import os
+import certifi
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
